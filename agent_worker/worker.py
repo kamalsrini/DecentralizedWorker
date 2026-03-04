@@ -10,6 +10,7 @@ import importlib
 import json
 import logging
 import os
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +18,37 @@ from agent_worker import git_ops, schema_validator
 from agent_worker.llm import LLMClient
 
 logger = logging.getLogger(__name__)
+
+# Regex for safe identifiers used in file paths and branch names.
+# Only allows alphanumeric characters, hyphens, underscores, and dots.
+_SAFE_ID_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$")
+
+
+def _validate_identifier(value: str, name: str) -> str:
+    """Validate that a string is safe for use in file paths and branch names.
+
+    Prevents path traversal (../, /), shell injection, and other attacks
+    via agent_id, task_id, or section_id fields.
+
+    Args:
+        value: The identifier string to validate.
+        name: Human-readable name for error messages.
+
+    Returns:
+        The validated string.
+
+    Raises:
+        ValueError: If the identifier contains unsafe characters.
+    """
+    if not value or not _SAFE_ID_RE.match(value):
+        raise ValueError(
+            f"Invalid {name}: {value!r}. "
+            f"Must match {_SAFE_ID_RE.pattern} (alphanumeric, hyphens, underscores, dots; 1-128 chars)."
+        )
+    # Extra guard: reject any path traversal attempts
+    if ".." in value or "/" in value or "\\" in value:
+        raise ValueError(f"Invalid {name}: {value!r}. Path traversal characters are not allowed.")
+    return value
 
 # Maps skill names to their module paths and class names
 SKILL_REGISTRY: dict[str, tuple[str, str]] = {
@@ -44,10 +76,12 @@ class AgentWorker:
             KeyError: If AGENT_ID, REPO_URL, or GITHUB_TOKEN are not set.
             ValueError: If a non-local LLM provider is selected but LLM_API_KEY is missing.
         """
-        self.agent_id = os.environ["AGENT_ID"]
+        self.agent_id = _validate_identifier(os.environ["AGENT_ID"], "AGENT_ID")
         self.repo_url = os.environ["REPO_URL"]
         self.github_token = os.environ["GITHUB_TOKEN"]
-        self.skill_name = os.environ.get("SKILL_NAME", "eu_ai_act_parser")
+        self.skill_name = _validate_identifier(
+            os.environ.get("SKILL_NAME", "eu_ai_act_parser"), "SKILL_NAME"
+        )
         self.work_dir = os.environ.get("WORK_DIR", "/workspace")
         self.repo_dir = os.path.join(self.work_dir, "repo")
 
@@ -190,6 +224,10 @@ class AgentWorker:
         if not self.source_dir.is_dir():
             return ""
 
+        # Validate section_id before using in file path
+        if section_id:
+            _validate_identifier(section_id, "section_id")
+
         # Try section-specific file first
         for ext in (".md", ".txt", ".json"):
             candidate = self.source_dir / f"{section_id}{ext}"
@@ -237,6 +275,7 @@ class AgentWorker:
         Raises:
             ValueError: If the task is not found or is assigned to another agent.
         """
+        _validate_identifier(task_id, "task_id")
         logger.info("Claiming task: %s", task_id)
 
         # 1. Clone or pull repo
@@ -290,6 +329,7 @@ class AgentWorker:
         Raises:
             ValueError: If the task is not found or output validation fails.
         """
+        _validate_identifier(task_id, "task_id")
         logger.info("Executing task: %s", task_id)
 
         # Ensure repo is cloned
@@ -306,6 +346,7 @@ class AgentWorker:
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         for section_id in sections:
+            _validate_identifier(section_id, "section_id")
             logger.info("Processing section: %s", section_id)
 
             # Build task metadata for the skill
@@ -502,6 +543,7 @@ class AgentWorker:
         Raises:
             ValueError: If no output files are found or validation fails.
         """
+        _validate_identifier(task_id, "task_id")
         logger.info("Submitting task: %s", task_id)
 
         if not Path(self.repo_dir).is_dir():
@@ -595,6 +637,7 @@ class AgentWorker:
         Args:
             task_id: The task ID to write a retrospective for.
         """
+        _validate_identifier(task_id, "task_id")
         logger.info("Generating retro for task: %s", task_id)
 
         # Clone/pull repo

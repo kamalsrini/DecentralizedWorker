@@ -1,90 +1,60 @@
 version: "3.8"
 
+# Security defaults applied to all services via x-agent-defaults
+x-agent-defaults: &agent-defaults
+  build:
+    context: .
+    dockerfile: Dockerfile
+  env_file:
+    - .env
+  environment:
+    - AGENT_ID=${AGENT_ID:-agent-001}
+    - REPO_URL=${REPO_URL}
+    - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+    - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
+    - WORK_DIR=/workspace
+    - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    # Secrets passed via env_file (.env), never hardcoded here
+  volumes:
+    - workspace:/workspace
+  # Security hardening
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  read_only: true
+  tmpfs:
+    - /tmp:size=100M
+  networks:
+    - agent-net
+  mem_limit: 2g
+  pids_limit: 100
+
 services:
   agent-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - AGENT_ID=${AGENT_ID:-agent-001}
-      - REPO_URL=${REPO_URL}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
-      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
-      - WORK_DIR=/workspace
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-    volumes:
-      - workspace:/workspace
+    <<: *agent-defaults
     command: ["claim", "--task-id", "${TASK_ID:-task-001}"]
 
   agent-execute:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - AGENT_ID=${AGENT_ID:-agent-001}
-      - REPO_URL=${REPO_URL}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
-      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
-      - WORK_DIR=/workspace
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-    volumes:
-      - workspace:/workspace
+    <<: *agent-defaults
     command: ["execute", "--task-id", "${TASK_ID:-task-001}"]
 
   agent-submit:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - AGENT_ID=${AGENT_ID:-agent-001}
-      - REPO_URL=${REPO_URL}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
-      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
-      - WORK_DIR=/workspace
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-    volumes:
-      - workspace:/workspace
+    <<: *agent-defaults
     command: ["submit", "--task-id", "${TASK_ID:-task-001}"]
 
   agent-audit:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - AGENT_ID=${AGENT_ID:-agent-001}
-      - REPO_URL=${REPO_URL}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
-      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
-      - WORK_DIR=/workspace
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-    volumes:
-      - workspace:/workspace
+    <<: *agent-defaults
     command: ["audit", "--pr-number", "${PR_NUMBER:-1}"]
 
   agent-retro:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - AGENT_ID=${AGENT_ID:-agent-001}
-      - REPO_URL=${REPO_URL}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - LLM_API_KEY=${LLM_API_KEY}
-      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
-      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
-      - WORK_DIR=/workspace
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-    volumes:
-      - workspace:/workspace
+    <<: *agent-defaults
     command: ["retro", "--task-id", "${TASK_ID:-task-001}"]
 
 volumes:
   workspace:
+
+networks:
+  agent-net:
+    driver: bridge
+    internal: false

@@ -31,7 +31,6 @@ from pathlib import Path
 
 
 DEFAULT_SECRET_ENV = "ATTESTATION_SECRET"
-DEFAULT_SECRET = "agentwork-default-attestation-key"
 
 
 def load_json_file(filepath):
@@ -48,15 +47,22 @@ def load_json_file(filepath):
 
 
 def get_signing_secret():
-    """Get the HMAC signing secret from environment, with a fallback default."""
+    """Get the HMAC signing secret from environment. Fails if not set."""
     secret = os.environ.get(DEFAULT_SECRET_ENV)
     if not secret:
         print(
-            f"WARNING: {DEFAULT_SECRET_ENV} not set in environment. "
-            f"Using default secret. Set {DEFAULT_SECRET_ENV} for production use.",
+            f"ERROR: {DEFAULT_SECRET_ENV} environment variable is required.\n"
+            f"Generate a secret with: python3 -c \"import secrets; print(secrets.token_hex(32))\"\n"
+            f"Then: export {DEFAULT_SECRET_ENV}=<your-secret>",
             file=sys.stderr,
         )
-        secret = DEFAULT_SECRET
+        sys.exit(1)
+    if len(secret) < 32:
+        print(
+            f"WARNING: {DEFAULT_SECRET_ENV} is shorter than 32 characters. "
+            f"Use a stronger secret for production.",
+            file=sys.stderr,
+        )
     return secret
 
 
