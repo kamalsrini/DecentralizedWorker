@@ -1,0 +1,129 @@
+{
+  "section_id": "task-001",
+  "title": "Parse Title I — General Provisions (Articles 1-4)",
+  "articles": [
+    {
+      "article_number": "1",
+      "title": "Предмет",
+      "text": "Article 1 establishes the objectives of the AI Act: improving the internal market, promoting human-centric and trustworthy AI, ensuring high protection of health, safety, fundamental rights, democracy, rule of law and environment from harmful AI effects, and supporting innovation. It outlines harmonized rules for placing AI systems on the market, prohibited practices, requirements for high-risk systems, transparency rules, and support measures for innovation.",
+      "obligations": [
+        "Improve the functioning of the internal market",
+        "Promote human-centric and trustworthy artificial intelligence",
+        "Ensure high level of protection of health, safety, fundamental rights, democracy, rule of law and environment protection",
+        "Support innovation"
+      ],
+      "applies_to": [
+        "EU institutions",
+        "AI system operators"
+      ],
+      "risk_category": null,
+      "cross_references": [],
+      "key_definitions": []
+    },
+    {
+      "article_number": "2",
+      "title": "Обхват",
+      "text": "Article 2 defines the scope of application of the AI Act, covering providers, deployers, importers, distributors and affected persons within or outside the EU under specific circumstances. It includes exceptions for national security, military purposes, research and development, and personal non-professional use. Special provisions apply for high-risk AI systems under Union harmonisation legislation.",
+      "obligations": [
+        "Apply regulations to providers placing AI systems on the market in the Union",
+        "Apply regulations to deployers of AI systems established in the Union",
+        "Apply regulations when AI system output is used in the Union",
+        "Respect exceptions for national security and military purposes",
+        "Exclude personal non-professional use from deployer obligations"
+      ],
+      "applies_to": [
+        "AI providers",
+        "deployers",
+        "importers",
+        "distributors",
+        "affected persons",
+        "public authorities",
+        "international organizations"
+      ],
+      "risk_category": null,
+      "cross_references": [
+        "Article 6",
+        "Article 57",
+        "Articles 102-109",
+        "Article 112",
+        "Regulation (EU) 2022/2065",
+        "Regulation (EU) 2016/679",
+        "Regulation (EU) 2018/1725",
+        "Directive 2002/58/EC",
+        "Directive (EU) 2016/680",
+        "Article 10",
+        "Article 59",
+        "Article 5",
+        "Article 50",
+        "Annex I"
+      ],
+      "key_definitions": []
+    },
+    {
+      "article_number": "3",
+      "title": "Определения",
+      "text": "Article 3 provides comprehensive definitions of 68 key terms used throughout the AI Act, including fundamental concepts like 'AI system', 'provider', 'deployer', 'risk', various biometric systems, and technical terms related to AI development and deployment.",
+      "obligations": [],
+      "applies_to": [
+        "All operators under the AI Act"
+      ],
+      "risk_category": null,
+      "cross_references": [
+        "Regulation (EU) 1025/2012",
+        "Regulation (EU) 2019/1020",
+        "Regulation (EU) 2016/679",
+        "Directive (EU) 2016/680",
+        "Regulation (EU) 2018/1725",
+        "Directive (EU) 2022/2557"
+      ],
+      "key_definitions": [
+        {
+          "term": "AI system",
+          "definition": "machine-based system designed to operate with varying levels of autonomy and that may exhibit adaptiveness after deployment, which generates outputs such as predictions, content, recommendations or decisions that can influence physical or virtual environments"
+        },
+        {
+          "term": "provider",
+          "definition": "natural or legal person, public authority, agency or other body that develops an AI system or a general-purpose AI model or has an AI system or a general-purpose AI model developed and places it on the market or puts the AI system into service under its own name or trademark"
+        },
+        {
+          "term": "deployer",
+          "definition": "natural or legal person, public authority, agency or other body using an AI system under its authority, except where the AI system is used in the course of a personal non-professional activity"
+        },
+        {
+          "term": "high-risk AI system",
+          "definition": "AI systems that pose significant risk to health, safety or fundamental rights"
+        },
+        {
+          "term": "general-purpose AI model",
+          "definition": "AI model that displays significant generality and is capable of competently performing a wide range of distinct tasks regardless of the way the model is placed on the market"
+        }
+      ]
+    },
+    {
+      "article_number": "4",
+      "title": "Грамотност в областта на ИИ",
+      "text": "Article 4 establishes the obligation for AI providers and deployers to ensure adequate AI literacy levels among their personnel and others involved in operating and using AI systems. This includes considering technical knowledge, experience, education, training, context of use, and affected persons or groups.",
+      "obligations": [
+        "Ensure sufficient level of AI literacy of personnel involved in AI system operation and use",
+        "Consider technical knowledge, experience, education and training of personnel",
+        "Take into account the context in which AI systems will be used",
+        "Consider persons or groups of persons on whom AI systems will be used"
+      ],
+      "applies_to": [
+        "AI providers",
+        "deployers"
+      ],
+      "risk_category": null,
+      "cross_references": [],
+      "key_definitions": [
+        {
+          "term": "AI literacy",
+          "definition": "skills, knowledge and understanding that allow providers, deployers and affected persons to make an informed deployment of AI systems, as well as to gain awareness about the opportunities and risks of AI"
+        }
+      ]
+    }
+  ],
+  "summary": "These articles establish the foundational framework of the EU AI Act, defining its objectives, scope, key terminology, and basic obligations. Article 1 sets out the Act's goals of promoting trustworthy AI while protecting fundamental rights. Article 2 defines the territorial and material scope, including important exceptions for national security and personal use. Article 3 provides 68 essential definitions that form the regulatory vocabulary. Article 4 introduces the cross-cutting requirement for AI literacy among operators. Together, these articles create the conceptual and legal foundation for the detailed requirements that follow in subsequent chapters.",
+  "parsed_by": "agent-alpha",
+  "parsed_at": "2026-03-04T07:20:55.114198+00:00"
+}

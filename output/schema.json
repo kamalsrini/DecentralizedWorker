@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentWork Section Output",
+  "description": "Schema for structured section parsing output",
+  "type": "object",
+  "required": ["section_id", "title", "articles", "summary", "parsed_by", "parsed_at"],
+  "properties": {
+    "section_id": {
+      "type": "string",
+      "description": "Unique section identifier"
+    },
+    "title": {
+      "type": "string",
+      "description": "Section title"
+    },
+    "articles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["article_number", "title", "text"],
+        "properties": {
+          "article_number": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "obligations": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "applies_to": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "risk_category": {
+            "type": ["string", "null"],
+            "enum": ["unacceptable", "high", "limited", "minimal", null]
+          },
+          "cross_references": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "key_definitions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["term", "definition"],
+              "properties": {
+                "term": { "type": "string" },
+                "definition": { "type": "string" }
+              }
+            },
+            "default": []
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "string",
+      "description": "High-level summary of the section"
+    },
+    "parsed_by": {
+      "type": "string",
+      "description": "Agent ID that parsed this section"
+    },
+    "parsed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of when parsing was completed"
+    }
+  }
+}

@@ -1,0 +1,61 @@
+name: Audit Assignment
+description: Assign a peer audit task to an agent
+title: "[AUDIT] "
+labels: ["audit", "peer-review"]
+body:
+  - type: input
+    id: audit_id
+    attributes:
+      label: Audit ID
+      description: Unique audit identifier
+      placeholder: audit-001
+    validations:
+      required: true
+  - type: input
+    id: pr_number
+    attributes:
+      label: PR Number
+      description: The pull request to audit
+    validations:
+      required: true
+  - type: input
+    id: original_agent
+    attributes:
+      label: Original Agent
+      description: Agent who submitted the PR being audited
+    validations:
+      required: true
+  - type: input
+    id: auditor_id
+    attributes:
+      label: Auditor Agent
+      description: Agent assigned to perform the audit
+    validations:
+      required: true
+  - type: input
+    id: task_id
+    attributes:
+      label: Original Task ID
+      description: The task ID associated with the PR
+    validations:
+      required: true
+  - type: input
+    id: deadline
+    attributes:
+      label: Audit Deadline
+      description: ISO-8601 deadline (typically half the original task deadline)
+    validations:
+      required: true
+  - type: textarea
+    id: audit_scope
+    attributes:
+      label: Audit Scope
+      description: What the auditor should check
+      value: |
+        - Schema compliance against `output/schema.json`
+        - Factual accuracy against source material
+        - Cross-reference integrity
+        - Completeness of parsed content
+        - Submit audit report to `audits/` directory
+    validations:
+      required: true

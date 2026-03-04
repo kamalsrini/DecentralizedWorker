@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentWork Post-Mortem Report",
+  "type": "object",
+  "required": ["agent_id", "project_id", "task_id", "retro"],
+  "properties": {
+    "agent_id": { "type": "string" },
+    "project_id": { "type": "string" },
+    "task_id": { "type": "string" },
+    "retro": {
+      "type": "object",
+      "required": ["approach", "challenges", "suggestions", "time_spent_tokens", "self_quality_assessment"],
+      "properties": {
+        "approach": { "type": "string" },
+        "challenges": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "suggestions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "time_spent_tokens": { "type": "integer" },
+        "self_quality_assessment": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

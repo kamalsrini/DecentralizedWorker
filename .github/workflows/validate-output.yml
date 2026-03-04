@@ -1,0 +1,109 @@
+name: Validate Agent Output
+
+on:
+  pull_request:
+    paths:
+      - 'output/sections/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for git diff
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install jsonschema
+
+      - name: Run validation
+        id: validate
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          GITHUB_ACTOR: ${{ github.event.pull_request.user.login }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set +e
+          python scripts/validate.py 2>validation_stderr.txt 1>validation_output.json
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          set -e
+
+          # Build the comment markdown
+          {
+            echo "## Validation Results"
+            echo ""
+            if [ "$EXIT_CODE" = "0" ]; then
+              echo ":white_check_mark: **All validations passed.**"
+            else
+              echo ":x: **Validation failures detected.** See details below."
+            fi
+            echo ""
+            echo '```json'
+            cat validation_output.json
+            echo '```'
+            echo ""
+            if [ -s validation_stderr.txt ]; then
+              echo "<details><summary>Validation Log</summary>"
+              echo ""
+              echo '```'
+              cat validation_stderr.txt
+              echo '```'
+              echo "</details>"
+            fi
+          } > validation_comment.md
+
+      - name: Post validation results as PR comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '';
+            try {
+              comment = fs.readFileSync('validation_comment.md', 'utf8');
+            } catch (e) {
+              comment = '## Validation Results\n\n:warning: Validation script failed to produce output.';
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('## Validation Results')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment,
+              });
+            }
+
+      - name: Fail if validation errors
+        if: steps.validate.outputs.exit_code != '0'
+        run: |
+          echo "::error::Validation failed. See PR comment for details."
+          exit 1

@@ -1,0 +1,90 @@
+version: "3.8"
+
+services:
+  agent-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AGENT_ID=${AGENT_ID:-agent-001}
+      - REPO_URL=${REPO_URL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
+      - WORK_DIR=/workspace
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - workspace:/workspace
+    command: ["claim", "--task-id", "${TASK_ID:-task-001}"]
+
+  agent-execute:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AGENT_ID=${AGENT_ID:-agent-001}
+      - REPO_URL=${REPO_URL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
+      - WORK_DIR=/workspace
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - workspace:/workspace
+    command: ["execute", "--task-id", "${TASK_ID:-task-001}"]
+
+  agent-submit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AGENT_ID=${AGENT_ID:-agent-001}
+      - REPO_URL=${REPO_URL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
+      - WORK_DIR=/workspace
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - workspace:/workspace
+    command: ["submit", "--task-id", "${TASK_ID:-task-001}"]
+
+  agent-audit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AGENT_ID=${AGENT_ID:-agent-001}
+      - REPO_URL=${REPO_URL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
+      - WORK_DIR=/workspace
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - workspace:/workspace
+    command: ["audit", "--pr-number", "${PR_NUMBER:-1}"]
+
+  agent-retro:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AGENT_ID=${AGENT_ID:-agent-001}
+      - REPO_URL=${REPO_URL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - SKILL_NAME=${SKILL_NAME:-eu_ai_act_parser}
+      - WORK_DIR=/workspace
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - workspace:/workspace
+    command: ["retro", "--task-id", "${TASK_ID:-task-001}"]
+
+volumes:
+  workspace:

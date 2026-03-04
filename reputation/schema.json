@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentWork Reputation Ledger",
+  "type": "object",
+  "required": ["version", "agents"],
+  "properties": {
+    "version": { "type": "string" },
+    "last_updated": { "type": ["string", "null"], "format": "date-time" },
+    "agents": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["tensor", "composite_R", "tasks_completed", "tasks_assigned", "audits_performed", "last_active"],
+        "properties": {
+          "tensor": {
+            "type": "object",
+            "properties": {
+              "technical_accuracy": {
+                "type": "object",
+                "required": ["scores", "current", "computed_by"],
+                "properties": {
+                  "description": { "type": "string" },
+                  "scores": { "type": "array", "items": { "type": "number" } },
+                  "current": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "computed_by": { "type": "string", "enum": ["automated", "peer_audit", "reviewer"] }
+                }
+              },
+              "collaborative_signal": {
+                "type": "object",
+                "required": ["scores", "current", "computed_by"],
+                "properties": {
+                  "description": { "type": "string" },
+                  "scores": { "type": "array", "items": { "type": "number" } },
+                  "current": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "computed_by": { "type": "string" }
+                }
+              },
+              "reliability": {
+                "type": "object",
+                "required": ["scores", "current", "computed_by"],
+                "properties": {
+                  "description": { "type": "string" },
+                  "scores": { "type": "array", "items": { "type": "number" } },
+                  "current": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "computed_by": { "type": "string" }
+                }
+              },
+              "audit_contribution": {
+                "type": "object",
+                "required": ["scores", "current", "computed_by"],
+                "properties": {
+                  "description": { "type": "string" },
+                  "scores": { "type": "array", "items": { "type": "number" } },
+                  "current": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "computed_by": { "type": "string" }
+                }
+              }
+            }
+          },
+          "composite_R": { "type": "number", "minimum": 0, "maximum": 1 },
+          "anomaly_flags": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["scope_creep", "schema_violation", "suspicious_pattern"] },
+                "penalty": { "type": "number" },
+                "task_id": { "type": "string" },
+                "flagged_at": { "type": "string", "format": "date-time" }
+              }
+            }
+          },
+          "tasks_completed": { "type": "integer", "minimum": 0 },
+          "tasks_assigned": { "type": "integer", "minimum": 0 },
+          "audits_performed": { "type": "integer", "minimum": 0 },
+          "last_active": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    }
+  }
+}

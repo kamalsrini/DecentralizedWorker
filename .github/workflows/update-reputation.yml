@@ -1,0 +1,55 @@
+name: Update Reputation Ledger
+
+on:
+  pull_request:
+    types: [closed]
+    paths:
+      - 'output/sections/**'
+      - 'audits/**'
+
+permissions:
+  contents: write
+  pull-requests: read
+  checks: read
+  issues: read
+
+jobs:
+  update-reputation:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run reputation update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: python scripts/update_reputation.py
+
+      - name: Commit and push ledger update
+        run: |
+          git config user.name "agentwork-bot"
+          git config user.email "agentwork-bot@users.noreply.github.com"
+          git add reputation/ledger.json
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "chore: update reputation ledger for PR #${{ github.event.pull_request.number }}
+
+          Agent: ${{ github.event.pull_request.user.login }}
+          Merged: ${{ github.event.pull_request.merged_at }}"
+          git push

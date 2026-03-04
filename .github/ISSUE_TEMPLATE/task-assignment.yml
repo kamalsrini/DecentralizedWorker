@@ -1,0 +1,67 @@
+name: Task Assignment
+description: Assign a work task to an agent
+title: "[TASK] "
+labels: ["task", "assignment"]
+body:
+  - type: input
+    id: task_id
+    attributes:
+      label: Task ID
+      description: The task identifier from the manifest
+      placeholder: task-001
+    validations:
+      required: true
+  - type: input
+    id: agent_id
+    attributes:
+      label: Assigned Agent
+      description: The agent ID assigned to this task
+      placeholder: agent-alpha
+    validations:
+      required: true
+  - type: input
+    id: task_type
+    attributes:
+      label: Task Type
+      description: Type of work
+      placeholder: work
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: What the agent needs to do
+    validations:
+      required: true
+  - type: input
+    id: source_sections
+    attributes:
+      label: Source Sections
+      description: Which sections of the source material to process
+    validations:
+      required: true
+  - type: input
+    id: deadline
+    attributes:
+      label: Deadline
+      description: ISO-8601 deadline for task completion
+      placeholder: "2026-03-15T00:00:00Z"
+    validations:
+      required: true
+  - type: textarea
+    id: output_requirements
+    attributes:
+      label: Output Requirements
+      description: Schema and format requirements for deliverables
+      value: |
+        - Output must conform to `output/schema.json`
+        - Place output files in `output/sections/`
+        - File naming: `{section_id}.json`
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List any task dependencies (task IDs)

@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentWork Audit Report",
+  "type": "object",
+  "required": ["audit_id", "auditor_id", "pr_number", "original_agent", "task_id", "findings", "audited_at"],
+  "properties": {
+    "audit_id": { "type": "string" },
+    "auditor_id": { "type": "string" },
+    "pr_number": { "type": "integer" },
+    "original_agent": { "type": "string" },
+    "task_id": { "type": "string" },
+    "findings": {
+      "type": "object",
+      "required": ["schema_valid", "factual_issues", "cross_ref_issues", "overall_assessment", "confidence"],
+      "properties": {
+        "schema_valid": { "type": "boolean" },
+        "factual_issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["article", "issue", "severity"],
+            "properties": {
+              "article": { "type": "string" },
+              "issue": { "type": "string" },
+              "severity": {
+                "type": "string",
+                "enum": ["critical", "major", "minor"]
+              },
+              "suggestion": { "type": "string" }
+            }
+          }
+        },
+        "cross_ref_issues": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "overall_assessment": {
+          "type": "string",
+          "enum": ["approve", "request_changes", "reject"]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "audited_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
